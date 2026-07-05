@@ -3,28 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>My To-Do List</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2 id = "title" >My To-Do List</h2>
-    <input type="text" id="taskInput" placeholder="New task...">
-    <button onclick="addTask()">Add</button>
-    <ul id="taskList"></ul>
-    <button type="text" onclick="changeColor()">Details</button>
+    <div class="container">
+        <h1> My To-Do List</h1>
+        <p class="subtitle">Stay organized and productive!</p>
+
+        <div class="input-section">
+            <input 
+                type="text" 
+                id="taskInput" 
+                placeholder="Add a new task..."
+                onkeypress="handleKeyPress(event)"
+            >
+            <button onclick="addTask()">Add</button>
+        </div>
+
+        <ul id="taskList"></ul>
+
+        <div id="emptyMessage" class="empty-message">
+            No tasks yet! Add one to get started! ✨
+        </div>
+
+        <div class="task-count">
+            <span id="taskCount">0</span> tasks total
+        </div>
+    </div>
 
     <script>
-        function addTask(){
-            const input= document.getElementById('taskInput');
-            const task = input.value.trim();
-            if(task){
-                const li = document.createElement('li');
-                document.getElementById('taskList').appendChild(li);
-                input.value = '';
+        // Function to add a new task
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const taskText = input.value.trim();
+
+            // Check if input is not empty
+            if (taskText === '') {
+                alert('Please enter a task!');
+                return;
+            }
+
+            // Create list item
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="task-text">${taskText}</span>
+                <div class="task-buttons">
+                    <button class="complete-btn" onclick="completeTask(this)">Done</button>
+                    <button class="delete-btn" onclick="deleteTask(this)">Delete</button>
+                </div>
+            `;
+
+            // Add to task list
+            document.getElementById('taskList').appendChild(li);
+
+            // Clear input field
+            input.value = '';
+            input.focus();
+
+            // Update display
+            updateDisplay();
+        }
+
+        // Function to delete a task
+        function deleteTask(button) {
+            button.parentElement.parentElement.remove();
+            updateDisplay();
+        }
+
+        // Function to mark task as completed
+        function completeTask(button) {
+            const li = button.parentElement.parentElement;
+            li.classList.toggle('completed');
+        }
+
+        // Function to handle Enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addTask();
             }
         }
-        function changeColor(){
-             document.getElementById("title").color = "red";
+
+        // Function to update the display
+        function updateDisplay() {
+            const taskList = document.getElementById('taskList');
+            const emptyMessage = document.getElementById('emptyMessage');
+            const taskCount = document.getElementById('taskCount');
+
+            // Show or hide empty message
+            if (taskList.children.length === 0) {
+                emptyMessage.style.display = 'block';
+            } else {
+                emptyMessage.style.display = 'none';
+            }
+
+            // Update task count
+            taskCount.textContent = taskList.children.length;
         }
+
+        // Initialize display when page loads
+        updateDisplay();
     </script>
 </body>
 </html>
